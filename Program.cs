@@ -1,4 +1,5 @@
 ﻿using System;
+using RemitJet.ExchangeData.Clients;
 using RemitJet.ExchangeData.Models;
 
 namespace RemitJet.ExchangeData
@@ -11,6 +12,7 @@ namespace RemitJet.ExchangeData
 
 			//var api = new RebitPh (); // ApiToken = "yTvzB1pALESPyxb_yNkKrAsyuD42b5wo"
 			var api = new Coinage();
+
 
 			var task = api.GetQuote (new QuoteRequest());
 			//var task = api.GetTradebook(new TradebookRequest() { ExchangeMarketRef = "BTCCAD" });

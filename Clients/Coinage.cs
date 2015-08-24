@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RemitJet.ExchangeData.Interfaces;
 using RemitJet.ExchangeData.Models;
 
-namespace RemitJet.ExchangeData
+namespace RemitJet.ExchangeData.Clients
 {
-	public class CoinsPh : IGetQuoteApi
+	public class Coinage : IGetQuoteApi
 	{
 		private Func<IApiClient> _apiClient;
 		public Func<IApiClient> ApiClient
@@ -28,38 +29,23 @@ namespace RemitJet.ExchangeData
 
 		public Uri QuoteApiUri { get; set; }
 
-		public CoinsPh ()
+		public Coinage ()
 		{
-			this.QuoteApiUri = new Uri ("https://coins.ph/api/v1/quote");
-		}
-
-		private void CheckResponse(JToken jsonData)
-		{
-			if (jsonData["success"] != null && !jsonData["success"].Value<bool>()) {
-				if (jsonData ["message"] != null) {
-					throw new ExchangeDataException (jsonData["message"].Value<string>());
-				} else {
-					throw new ExchangeDataException ("Did not receive success flag from exchange response.");
-				}
-			}
+			this.QuoteApiUri = new Uri ("https://api.coinage.ph/trade/ticker");
 		}
 
 		public async Task<QuoteResponse> GetQuote(QuoteRequest request)
 		{
 			var client = this.ApiClient();
-			client.QueryString.Add ("currencypair", request.ExchangeMarketRef);
-
 			string rawData = await client.DownloadStringTaskAsync (this.QuoteApiUri);
 			var jsonData = JToken.Parse (rawData);
 
-			this.CheckResponse (jsonData);
-
-			var quoteData = jsonData["quote"];
-
 			var quote = new QuoteResponse () {
 				ExchangeMarketCD = request.ExchangeMarketCD,
-				LastBid = Decimal.Parse(quoteData["bid"].Value<string>()),
-				LastAsk = Decimal.Parse(quoteData["ask"].Value<string>()),
+				LastTrade = Decimal.Parse(jsonData["last"]["value"].Value<string>()),
+				ReportedTime = DateTimeOffset.Parse(jsonData["last"]["timestamp"].Value<string>(),
+													CultureInfo.InvariantCulture.DateTimeFormat,
+													DateTimeStyles.AssumeUniversal),
 				RawData = Encoding.ASCII.GetBytes (jsonData.ToString())
 			};
 

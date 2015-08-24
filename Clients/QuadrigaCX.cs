@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using RemitJet.ExchangeData.Interfaces;
 using RemitJet.ExchangeData.Models;
 
-namespace RemitJet.ExchangeData
+namespace RemitJet.ExchangeData.Clients
 {
 	public class QuadrigaCX : IGetQuoteApi, ITradebookApi, IOrderbookApi
 	{

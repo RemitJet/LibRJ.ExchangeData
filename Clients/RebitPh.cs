@@ -6,11 +6,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RemitJet.ExchangeData.Interfaces;
 using RemitJet.ExchangeData.Models;
-using System.Globalization;
 
-namespace RemitJet.ExchangeData
+namespace RemitJet.ExchangeData.Clients
 {
-	public class Coinage : IGetQuoteApi
+	public class RebitPh : IGetQuoteApi
 	{
 		private Func<IApiClient> _apiClient;
 		public Func<IApiClient> ApiClient
@@ -29,23 +28,23 @@ namespace RemitJet.ExchangeData
 
 		public Uri QuoteApiUri { get; set; }
 
-		public Coinage ()
+		public RebitPh ()
 		{
-			this.QuoteApiUri = new Uri ("https://api.coinage.ph/trade/ticker");
+			this.QuoteApiUri = new Uri ("https://rebit.ph/api/v1/rates");
 		}
 
 		public async Task<QuoteResponse> GetQuote(QuoteRequest request)
 		{
 			var client = this.ApiClient();
+			client.QueryString.Add ("token", request.ApiToken);
+
 			string rawData = await client.DownloadStringTaskAsync (this.QuoteApiUri);
 			var jsonData = JToken.Parse (rawData);
 
 			var quote = new QuoteResponse () {
 				ExchangeMarketCD = request.ExchangeMarketCD,
-				LastTrade = Decimal.Parse(jsonData["last"]["value"].Value<string>()),
-				ReportedTime = DateTimeOffset.Parse(jsonData["last"]["timestamp"].Value<string>(),
-													CultureInfo.InvariantCulture.DateTimeFormat,
-													DateTimeStyles.AssumeUniversal),
+				LastBid = Decimal.Parse(jsonData["PHP"].Value<string>()),
+				LastAsk = Decimal.Parse(jsonData["PHP-ASK"].Value<string>()),
 				RawData = Encoding.ASCII.GetBytes (jsonData.ToString())
 			};
 

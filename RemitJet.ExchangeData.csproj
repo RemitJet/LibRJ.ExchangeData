@@ -40,7 +40,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadrigaCX.cs" />
     <Compile Include="Models\QuoteRequest.cs" />
     <Compile Include="Models\QuoteResponse.cs" />
     <Compile Include="Utilities.cs" />
@@ -51,28 +50,31 @@
     <Compile Include="Interfaces\IQuoteApi.cs" />
     <Compile Include="Interfaces\ITradebookApi.cs" />
     <Compile Include="Interfaces\IOrderbookApi.cs" />
-    <Compile Include="Anx.cs" />
-    <Compile Include="BankOfCanada.cs" />
-    <Compile Include="BuyBitcoinPh.cs" />
-    <Compile Include="Cavirtex.cs" />
-    <Compile Include="Coinage.cs" />
-    <Compile Include="CoinsPh.cs" />
-    <Compile Include="Kraken.cs" />
-    <Compile Include="RebitPh.cs" />
-    <Compile Include="Taurus.cs" />
-    <Compile Include="WesternUnion.cs" />
-    <Compile Include="Iremit.cs" />
-    <Compile Include="ApiClient.cs" />
     <Compile Include="Interfaces\IApiClient.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="Clients\Anx.cs" />
+    <Compile Include="Clients\BankOfCanada.cs" />
+    <Compile Include="Clients\BuyBitcoinPh.cs" />
+    <Compile Include="Clients\Cavirtex.cs" />
+    <Compile Include="Clients\Coinage.cs" />
+    <Compile Include="Clients\CoinsPh.cs" />
+    <Compile Include="Clients\Iremit.cs" />
+    <Compile Include="Clients\Kraken.cs" />
+    <Compile Include="Clients\QuadrigaCX.cs" />
+    <Compile Include="Clients\RebitPh.cs" />
+    <Compile Include="Clients\Taurus.cs" />
+    <Compile Include="Clients\WesternUnion.cs" />
+    <Compile Include="ApiClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="Clients\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="LICENSE" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

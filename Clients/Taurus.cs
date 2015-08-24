@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RemitJet.ExchangeData
+namespace RemitJet.ExchangeData.Clients
 {
 	public class Taurus
 	{

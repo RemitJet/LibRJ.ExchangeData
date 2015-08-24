@@ -7,9 +7,9 @@ using Newtonsoft.Json.Linq;
 using RemitJet.ExchangeData.Interfaces;
 using RemitJet.ExchangeData.Models;
 
-namespace RemitJet.ExchangeData
+namespace RemitJet.ExchangeData.Clients
 {
-	public class Cavirtex : IGetQuoteApi, ITradebookApi, IOrderbookApi
+	public class Kraken : IGetQuoteApi, ITradebookApi, IOrderbookApi
 	{
 		private Func<IApiClient> _apiClient;
 		public Func<IApiClient> ApiClient
@@ -30,7 +30,7 @@ namespace RemitJet.ExchangeData
 		public Uri TradebookApiUri { get; set; }
 		public Uri OrderbookApiUri { get; set; } 
 
-		public Cavirtex ()
+		public Kraken ()
 		{
 			this.QuoteApiUri = new Uri ("https://cavirtex.com/api2/ticker.json");
 			this.TradebookApiUri = new Uri ("https://cavirtex.com/api2/trades.json");
