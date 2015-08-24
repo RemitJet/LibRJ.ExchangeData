@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{613E2441-5940-4FBB-990B-B921FB835472}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>RemitJet.ExchangeData</RootNamespace>
+    <AssemblyName>RemitJet.ExchangeAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuadrigaCX.cs" />
+    <Compile Include="Models\QuoteRequest.cs" />
+    <Compile Include="Models\QuoteResponse.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Models\TradebookRequest.cs" />
+    <Compile Include="Models\TradebookResponse.cs" />
+    <Compile Include="Models\OrderbookResponse.cs" />
+    <Compile Include="Models\OrderbookRequest.cs" />
+    <Compile Include="Interfaces\IQuoteApi.cs" />
+    <Compile Include="Interfaces\ITradebookApi.cs" />
+    <Compile Include="Interfaces\IOrderbookApi.cs" />
+    <Compile Include="Anx.cs" />
+    <Compile Include="BankOfCanada.cs" />
+    <Compile Include="BuyBitcoinPh.cs" />
+    <Compile Include="Cavirtex.cs" />
+    <Compile Include="Coinage.cs" />
+    <Compile Include="CoinsPh.cs" />
+    <Compile Include="Kraken.cs" />
+    <Compile Include="RebitPh.cs" />
+    <Compile Include="Taurus.cs" />
+    <Compile Include="WesternUnion.cs" />
+    <Compile Include="Iremit.cs" />
+    <Compile Include="ApiClient.cs" />
+    <Compile Include="Interfaces\IApiClient.cs" />
+    <Compile Include="Exceptions.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
