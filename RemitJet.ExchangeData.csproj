@@ -6,7 +6,7 @@
     <ProjectGuid>{613E2441-5940-4FBB-990B-B921FB835472}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>RemitJet.ExchangeData</RootNamespace>
-    <AssemblyName>RemitJet.ExchangeAPI</AssemblyName>
+    <AssemblyName>RemitJet.ExchangeData</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
@@ -19,6 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
+    <DocumentationFile>bin\Debug\RemitJet.ExchangeData.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -72,5 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="LICENSE" />
   </ItemGroup>
 </Project>
