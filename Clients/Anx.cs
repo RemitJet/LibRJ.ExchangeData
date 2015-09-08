@@ -62,32 +62,35 @@ namespace RemitJet.ExchangeData.Clients
 		public async Task<QuoteResponse> GetQuote(QuoteRequest request)
 		{
 			var client = this.ApiClient();
-			//client.QueryString.Add ("since", "1440701196");
 
 			var endpointUri = new Uri (
 				this.QuoteApiUri, 
 				this.QuoteApiUri.AbsolutePath.Replace("$$", request.ExchangeMarketRef)
 			);
-			string signature = this.GenerateRequestSignature (request.ApiSecret, endpointUri.AbsolutePath,
-															  client.QueryString);
+			string signature = this.GenerateRequestSignature(
+				request.ApiSecret,
+				endpointUri.AbsolutePath,
+				client.QueryString
+			);
 			
 			client.Headers.Add ("Rest-Key", request.ApiToken);
 			client.Headers.Add ("Rest-Sign", signature);
 
 			string rawData = await client.DownloadStringTaskAsync (endpointUri);
 			var jsonData = JToken.Parse (rawData);
-
-			var quoteData = jsonData["ticker"][request.ExchangeMarketRef];
+			var quoteData = jsonData["data"];
 
 			var quote = new QuoteResponse () {
 				ExchangeMarketCD = request.ExchangeMarketCD,
-				DailyVolume = Decimal.Parse(quoteData["volume"].Value<string>()),
-				DailyHigh = Decimal.Parse(quoteData["high"].Value<string>()),
-				DailyLow = Decimal.Parse(quoteData["low"].Value<string>()),
-				LastBid = Decimal.Parse(quoteData["buy"].Value<string>()),
-				LastAsk = Decimal.Parse(quoteData["sell"].Value<string>()),
-				LastTrade = Decimal.Parse(quoteData["last"].Value<string>()),
-				RawData = Encoding.ASCII.GetBytes (jsonData.ToString())
+				DailyAverage = Decimal.Parse(quoteData["avg"]["value"].Value<string>()),
+				DailyVolume = Decimal.Parse(quoteData["vol"]["value"].Value<string>()),
+				DailyHigh = Decimal.Parse(quoteData["high"]["value"].Value<string>()),
+				DailyLow = Decimal.Parse(quoteData["low"]["value"].Value<string>()),
+				LastBid = Decimal.Parse(quoteData["buy"]["value"].Value<string>()),
+				LastAsk = Decimal.Parse(quoteData["sell"]["value"].Value<string>()),
+				LastTrade = Decimal.Parse(quoteData["last"]["value"].Value<string>()),
+				RawData = Encoding.ASCII.GetBytes (jsonData.ToString()),
+				ReportedTime = Utilities.GetDateTimeFromUnixTimestamp (quoteData ["dataUpdateTime"].Value<long> () / 1000000)
 			};
 
 			return quote;
@@ -97,20 +100,32 @@ namespace RemitJet.ExchangeData.Clients
 		{
 			var response = new TradebookResponse ();
 			var client = this.ApiClient ();
+			var endpointUri = new Uri (
+				this.TradebookApiUri, 
+				this.TradebookApiUri.AbsolutePath.Replace("$$", request.ExchangeMarketRef)
+			);
+			string signature = this.GenerateRequestSignature(
+				request.ApiSecret,
+				endpointUri.AbsolutePath,
+				client.QueryString
+			);
 
-			client.QueryString.Add ("currencypair", request.ExchangeMarketRef);
-			string rawData = await client.DownloadStringTaskAsync (this.TradebookApiUri);
+			client.Headers.Add ("Rest-Key", request.ApiToken);
+			client.Headers.Add ("Rest-Sign", signature);
+
+			string rawData = await client.DownloadStringTaskAsync (endpointUri);
 			var jsonData = JToken.Parse (rawData);
 
 			response.AddRange (
-				from rawTrade in jsonData["trades"]
+				from rawTrade in jsonData["data"]
 				select new Trade () {
 					ExchangeMarketCD = request.ExchangeMarketCD,
-					TradeRef = rawTrade ["id"].Value<string> (),
+					TradeRef = rawTrade ["tid"].Value<string> (),
 					Price = Decimal.Parse (rawTrade ["price"].Value<string> ()),
 					Amount = Decimal.Parse (rawTrade ["amount"].Value<string> ()),
+					SettlementCurrencyCD = rawTrade["primary"] != null ? rawTrade["price_currency"].Value<string>() : null,
 					RawData = Encoding.ASCII.GetBytes (rawTrade.ToString ()),
-					ReportedTime = Utilities.GetDateTimeFromUnixTimestamp (rawTrade ["date"].Value<long> ()),
+					ReportedTime = Utilities.GetDateTimeFromUnixTimestamp (rawTrade ["tid"].Value<long> () / 1000),
 					LastSeen = DateTimeOffset.UtcNow
 				}
 			);
@@ -126,27 +141,32 @@ namespace RemitJet.ExchangeData.Clients
 			client.QueryString.Add ("currencypair", request.ExchangeMarketRef);
 			string rawData = await client.DownloadStringTaskAsync (this.OrderbookApiUri);
 			var jsonData = JToken.Parse (rawData);
+			DateTime reportedTime = Utilities.GetDateTimeFromUnixTimestamp(
+				jsonData ["data"] ["now"].Value<long> () / 1000000
+			);
 
 			response.AddRange (
-				from rawOrder in jsonData["orderbook"]["bids"]
+				from rawOrder in jsonData["data"]["bids"]
 				select new Order () {
 					ExchangeMarketCD = request.ExchangeMarketCD,
-					Amount = Decimal.Parse (rawOrder [1].Value<string> ()),
-					Price = Decimal.Parse (rawOrder [0].Value<string> ()),
+					Price = Decimal.Parse (rawOrder ["price"].Value<string> ()),
+					Amount = Decimal.Parse (rawOrder ["amount"].Value<string> ()),
 					OrderType = OrderType.BidOrder,
 					RawData = Encoding.ASCII.GetBytes (rawOrder.ToString ()),
+					ReportedTime = reportedTime,
 					LastSeen = DateTimeOffset.UtcNow
 				}
 			);
 
 			response.AddRange (
-				from rawOrder in jsonData["orderbook"]["asks"]
+				from rawOrder in jsonData["data"]["asks"]
 				select new Order () {
 					ExchangeMarketCD = request.ExchangeMarketCD,
-					Amount = Decimal.Parse (rawOrder[1].Value<string> ()),
-					Price = Decimal.Parse (rawOrder[0].Value<string> ()),
+					Price = Decimal.Parse (rawOrder ["price"].Value<string> ()),
+					Amount = Decimal.Parse (rawOrder ["amount"].Value<string> ()),
 					OrderType = OrderType.AskOrder,
 					RawData = Encoding.ASCII.GetBytes (rawOrder.ToString ()),
+					ReportedTime = reportedTime,
 					LastSeen = DateTimeOffset.UtcNow
 				}
 			);
